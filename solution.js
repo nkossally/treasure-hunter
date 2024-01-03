@@ -120,6 +120,9 @@ var Stacker = /** @class */ (function () {
                     return this.climbToStairThatNeedsBlock();
                 }
             }
+            if (currStairIdx !== -1 && !this.hasBlock) {
+                return this.climbDownStair(cell);
+            }
             if (this.shouldClimbDown) {
                 return this.climbDownStair(cell);
             }

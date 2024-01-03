@@ -188,6 +188,10 @@ class Stacker {
       }
     }
 
+    if(currStairIdx !== -1 && !this.hasBlock ){
+      return this.climbDownStair(cell);
+    }
+
     if (this.shouldClimbDown) {
       return this.climbDownStair(cell);
     }
