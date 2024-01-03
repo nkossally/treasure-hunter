@@ -256,7 +256,7 @@ var Stacker = /** @class */ (function () {
             var positionStr = JSON.stringify([_this.x, _this.y]);
             var idx = _this.stairLocations.indexOf(positionStr);
             if (idx === _this.stairLocations.length - 1)
-                return _this.getOffStair(cell);
+                return _this.getOffStair();
             var nextStairPosStr = _this.stairLocations[idx + 1];
             var dir;
             switch (true) {
@@ -279,7 +279,7 @@ var Stacker = /** @class */ (function () {
             }
             return dir;
         };
-        this.getOffStair = function (cell) {
+        this.getOffStair = function () {
             var dir;
             switch (true) {
                 case !_this.isStair(_this.x - 1, _this.y):

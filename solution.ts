@@ -1,6 +1,6 @@
 interface CellData {
   type: number;
-   level: number
+  level: number;
 }
 
 interface Cell {
@@ -32,7 +32,8 @@ class Stacker {
   down: string;
   pickup: string;
   drop: string;
-  reverseDirection: any
+  reverseDirection: any;
+
   constructor() {
     this.x = 0;
     this.y = 0;
@@ -188,7 +189,7 @@ class Stacker {
       }
     }
 
-    if(currStairIdx !== -1 && !this.hasBlock ){
+    if (currStairIdx !== -1 && !this.hasBlock) {
       return this.climbDownStair(cell);
     }
 
@@ -210,7 +211,7 @@ class Stacker {
       this.hasBlock = true;
       return this.pickup;
     }
-    let dir;
+    let dir: string | undefined;
     switch (true) {
       case cell.left.level === 1 && !this.isStair(this.x - 1, this.y):
         this.x--;
@@ -328,11 +329,11 @@ class Stacker {
     this.steps = [];
     const positionStr = JSON.stringify([this.x, this.y]);
     const idx = this.stairLocations.indexOf(positionStr);
-    if (idx === this.stairLocations.length - 1) return this.getOffStair(cell);
+    if (idx === this.stairLocations.length - 1) return this.getOffStair();
 
     const nextStairPosStr = this.stairLocations[idx + 1];
 
-    let dir;
+    let dir: string | undefined;
     switch (true) {
       case nextStairPosStr === JSON.stringify([this.x - 1, this.y]):
         this.x--;
@@ -354,8 +355,8 @@ class Stacker {
     return dir;
   };
 
-  getOffStair = (cell: Cell) => {
-    let dir;
+  getOffStair = () => {
+    let dir: string | undefined;
     switch (true) {
       case !this.isStair(this.x - 1, this.y):
         this.x--;
