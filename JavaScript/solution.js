@@ -5,13 +5,14 @@ var Stacker = /** @class */ (function () {
             if (!this.goldCoordinates) {
                 return this.getGoldCoordinates(cell);
             }
+            // The number of stairs needed is one less than
+            // the level of the cell with gold.
             if (this.stairLocations.length < this.goldLevel - 1) {
-                this.steps = [];
                 return this.setStairLocations(cell);
             }
             var areStairsBuilt = this.stairLevels[0] === this.goldLevel - 1;
             if (!areStairsBuilt) {
-                return this.addBlocksToAllStairs(cell);
+                return this.constructStairs(cell);
             }
             return this.goToGold(cell);
         };
@@ -87,21 +88,7 @@ var Stacker = /** @class */ (function () {
                     return this.up;
             }
         };
-        this.getStairIdxThatNeedsBlock = function () {
-            var stairIdx;
-            for (var i = 1; i < this.goldLevel; i++) {
-                if (stairIdx !== undefined)
-                    break;
-                for (var j = 0; j <= this.stairLocations.length - i; j++) {
-                    if (this.stairLevels[j] < i) {
-                        stairIdx = j;
-                        break;
-                    }
-                }
-            }
-            return stairIdx;
-        };
-        this.addBlocksToAllStairs = function (cell) {
+        this.constructStairs = function (cell) {
             var destinationStairIdx = this.getStairIdxThatNeedsBlock();
             var positionStr = JSON.stringify([this.x, this.y]);
             var currStairIdx = this.stairLocations.indexOf(positionStr);
@@ -132,6 +119,20 @@ var Stacker = /** @class */ (function () {
             if (!this.hasBlock) {
                 return this.getBlock(cell);
             }
+        };
+        this.getStairIdxThatNeedsBlock = function () {
+            var stairIdx;
+            for (var i = 1; i < this.goldLevel; i++) {
+                if (stairIdx !== undefined)
+                    break;
+                for (var j = 0; j <= this.stairLocations.length - i; j++) {
+                    if (this.stairLevels[j] < i) {
+                        stairIdx = j;
+                        break;
+                    }
+                }
+            }
+            return stairIdx;
         };
         this.getBlock = function (cell) {
             if (cell.level === 1 && !this.isStair(this.x, this.y)) {
@@ -230,7 +231,8 @@ var Stacker = /** @class */ (function () {
             var positionStr = JSON.stringify([_this.x, _this.y]);
             var currStairIdx = _this.stairLocations.indexOf(positionStr);
             var nextStairPosStr;
-            if (currStairIdx > destinationStairIdx) {
+            if (typeof destinationStairIdx === "number" &&
+                currStairIdx > destinationStairIdx) {
                 nextStairPosStr = _this.stairLocations[currStairIdx - 1];
             }
             else {
@@ -251,12 +253,12 @@ var Stacker = /** @class */ (function () {
                     return _this.down;
             }
         };
-        this.climbDownStair = function (cell) {
+        this.climbDownStair = function () {
             _this.steps = [];
             var positionStr = JSON.stringify([_this.x, _this.y]);
             var idx = _this.stairLocations.indexOf(positionStr);
             if (idx === _this.stairLocations.length - 1)
-                return _this.getOffStair();
+                return _this.getOffFinalStair();
             var nextStairPosStr = _this.stairLocations[idx + 1];
             var dir;
             switch (true) {
@@ -279,7 +281,7 @@ var Stacker = /** @class */ (function () {
             }
             return dir;
         };
-        this.getOffStair = function () {
+        this.getOffFinalStair = function () {
             var dir;
             switch (true) {
                 case !_this.isStair(_this.x - 1, _this.y):
@@ -301,7 +303,8 @@ var Stacker = /** @class */ (function () {
                 default:
                     break;
             }
-            _this.steps.push(dir);
+            if (dir)
+                _this.steps.push(dir);
             return dir;
         };
         this.areLevelsNeighbors = function (level1, level2) {

@@ -67,14 +67,15 @@ class Stacker {
       return this.getGoldCoordinates(cell);
     }
 
+    // The number of stairs needed is one less than
+    // the level of the cell with gold.
     if (this.stairLocations.length < this.goldLevel - 1) {
-      this.steps = [];
       return this.setStairLocations(cell);
     }
 
     const areStairsBuilt = this.stairLevels[0] === this.goldLevel - 1;
     if (!areStairsBuilt) {
-      return this.addBlocksToAllStairs(cell);
+      return this.constructStairs(cell);
     }
 
     return this.goToGold(cell);
@@ -154,21 +155,7 @@ class Stacker {
     }
   };
 
-  getStairIdxThatNeedsBlock = function () {
-    let stairIdx: undefined | number;
-    for (let i = 1; i < this.goldLevel; i++) {
-      if (stairIdx !== undefined) break;
-      for (let j = 0; j <= this.stairLocations.length - i; j++) {
-        if (this.stairLevels[j] < i) {
-          stairIdx = j;
-          break;
-        }
-      }
-    }
-    return stairIdx;
-  };
-
-  addBlocksToAllStairs = function (cell: Cell) {
+  constructStairs = function (cell: Cell) {
     const destinationStairIdx = this.getStairIdxThatNeedsBlock();
     const positionStr = JSON.stringify([this.x, this.y]);
     const currStairIdx = this.stairLocations.indexOf(positionStr);
@@ -204,6 +191,20 @@ class Stacker {
     if (!this.hasBlock) {
       return this.getBlock(cell);
     }
+  };
+
+  getStairIdxThatNeedsBlock = function () {
+    let stairIdx: undefined | number;
+    for (let i = 1; i < this.goldLevel; i++) {
+      if (stairIdx !== undefined) break;
+      for (let j = 0; j <= this.stairLocations.length - i; j++) {
+        if (this.stairLevels[j] < i) {
+          stairIdx = j;
+          break;
+        }
+      }
+    }
+    return stairIdx;
   };
 
   getBlock = function (cell: Cell) {
@@ -302,8 +303,11 @@ class Stacker {
     const destinationStairIdx = this.getStairIdxThatNeedsBlock();
     const positionStr = JSON.stringify([this.x, this.y]);
     const currStairIdx = this.stairLocations.indexOf(positionStr);
-    let nextStairPosStr;
-    if (currStairIdx > destinationStairIdx) {
+    let nextStairPosStr: string | undefined;
+    if (
+      typeof destinationStairIdx === "number" &&
+      currStairIdx > destinationStairIdx
+    ) {
       nextStairPosStr = this.stairLocations[currStairIdx - 1];
     } else {
       nextStairPosStr = this.stairLocations[currStairIdx + 1];
@@ -325,11 +329,11 @@ class Stacker {
     }
   };
 
-  climbDownStair = (cell: Cell) => {
+  climbDownStair = () => {
     this.steps = [];
     const positionStr = JSON.stringify([this.x, this.y]);
     const idx = this.stairLocations.indexOf(positionStr);
-    if (idx === this.stairLocations.length - 1) return this.getOffStair();
+    if (idx === this.stairLocations.length - 1) return this.getOffFinalStair();
 
     const nextStairPosStr = this.stairLocations[idx + 1];
 
@@ -355,7 +359,7 @@ class Stacker {
     return dir;
   };
 
-  getOffStair = () => {
+  getOffFinalStair = () => {
     let dir: string | undefined;
     switch (true) {
       case !this.isStair(this.x - 1, this.y):
@@ -377,7 +381,7 @@ class Stacker {
       default:
         break;
     }
-    this.steps.push(dir);
+    if (dir) this.steps.push(dir);
     return dir;
   };
 
