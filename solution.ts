@@ -62,7 +62,7 @@ class Stacker {
     };
   }
 
-  turn = function (cell: Cell) {
+  turn = function (cell: Cell): string {
     if (!this.goldCoordinates) {
       return this.getGoldCoordinates(cell);
     }
@@ -81,7 +81,7 @@ class Stacker {
     return this.goToGold(cell);
   };
 
-  getGoldCoordinates = function (cell: Cell) {
+  getGoldCoordinates = function (cell: Cell): string {
     if (cell.left.type === this.gold) {
       this.goldLevel = cell.left.level;
       this.goldCoordinates = [this.x - 1, this.y];
@@ -102,7 +102,7 @@ class Stacker {
     return this.goToRandomDirection(cell);
   };
 
-  goToGold = (cell: Cell) => {
+  goToGold = (cell: Cell): string | undefined => {
     this.reset();
     switch (true) {
       case cell.left.type === this.gold:
@@ -116,7 +116,7 @@ class Stacker {
     }
   };
 
-  reset = () => {
+  reset = (): void => {
     this.x = 0;
     this.y = 0;
     this.goldCoordinates = undefined;
@@ -128,7 +128,7 @@ class Stacker {
     this.shouldClimbDown = false;
   };
 
-  setStairLocations = function (cell: Cell) {
+  setStairLocations = function (cell: Cell): string | undefined {
     const location = JSON.stringify([this.x, this.y]);
     const leftStr = JSON.stringify([this.x - 1, this.y]);
     const rightStr = JSON.stringify([this.x + 1, this.y]);
@@ -155,7 +155,7 @@ class Stacker {
     }
   };
 
-  constructStairs = function (cell: Cell) {
+  constructStairs = function (cell: Cell): string | undefined {
     const destinationStairIdx = this.getStairIdxThatNeedsBlock();
     const positionStr = JSON.stringify([this.x, this.y]);
     const currStairIdx = this.stairLocations.indexOf(positionStr);
@@ -193,8 +193,8 @@ class Stacker {
     }
   };
 
-  getStairIdxThatNeedsBlock = function () {
-    let stairIdx: undefined | number;
+  getStairIdxThatNeedsBlock = function (): number | undefined {
+    let stairIdx: number | undefined;
     for (let i = 1; i < this.goldLevel; i++) {
       if (stairIdx !== undefined) break;
       for (let j = 0; j <= this.stairLocations.length - i; j++) {
@@ -207,7 +207,7 @@ class Stacker {
     return stairIdx;
   };
 
-  getBlock = function (cell: Cell) {
+  getBlock = function (cell: Cell): string | undefined {
     if (cell.level === 1 && !this.isStair(this.x, this.y)) {
       this.hasBlock = true;
       return this.pickup;
@@ -238,11 +238,11 @@ class Stacker {
     return dir;
   };
 
-  isStair = function (x: number, y: number) {
+  isStair = function (x: number, y: number): boolean {
     return this.stairLocations.includes(JSON.stringify([x, y]));
   };
 
-  reverseSteps = function () {
+  reverseSteps = function (): string {
     if (this.steps.length === 0) {
       throw new Error("no steps");
     }
@@ -265,7 +265,7 @@ class Stacker {
     return reverseStep;
   };
 
-  goToRandomDirection = function (cell: Cell) {
+  goToRandomDirection = function (cell: Cell): string | undefined {
     var n = (Math.random() * 4) >> 0;
     switch (n) {
       case 0:
@@ -299,7 +299,7 @@ class Stacker {
     }
   };
 
-  climbToStairThatNeedsBlock = () => {
+  climbToStairThatNeedsBlock = (): string | undefined => {
     const destinationStairIdx = this.getStairIdxThatNeedsBlock();
     const positionStr = JSON.stringify([this.x, this.y]);
     const currStairIdx = this.stairLocations.indexOf(positionStr);
@@ -329,7 +329,7 @@ class Stacker {
     }
   };
 
-  climbDownStair = () => {
+  climbDownStair = (): string | undefined => {
     this.steps = [];
     const positionStr = JSON.stringify([this.x, this.y]);
     const idx = this.stairLocations.indexOf(positionStr);
@@ -359,7 +359,7 @@ class Stacker {
     return dir;
   };
 
-  getOffFinalStair = () => {
+  getOffFinalStair = (): string | undefined => {
     let dir: string | undefined;
     switch (true) {
       case !this.isStair(this.x - 1, this.y):
@@ -385,32 +385,32 @@ class Stacker {
     return dir;
   };
 
-  areLevelsNeighbors = function (level1, level2) {
+  areLevelsNeighbors = function (level1: number, level2: number): boolean {
     return Math.abs(level1 - level2) <= 1;
   };
 
-  getCanGoLeft = function (cell: Cell) {
+  getCanGoLeft = function (cell: Cell): boolean {
     return (
       cell.left.type !== this.wall &&
       this.areLevelsNeighbors(cell.level, cell.left.level)
     );
   };
 
-  getCanGoRight = function (cell: Cell) {
+  getCanGoRight = function (cell: Cell): boolean {
     return (
       cell.right.type !== this.wall &&
       this.areLevelsNeighbors(cell.level, cell.right.level)
     );
   };
 
-  getCanGoDown = function (cell: Cell) {
+  getCanGoDown = function (cell: Cell): boolean {
     return (
       cell.down.type !== this.wall &&
       this.areLevelsNeighbors(cell.level, cell.down.level)
     );
   };
 
-  getCanGoUp = function (cell: Cell) {
+  getCanGoUp = function (cell: Cell): boolean {
     return (
       cell.up.type !== this.wall &&
       this.areLevelsNeighbors(cell.level, cell.up.level)
