@@ -1,9 +1,0 @@
-{
-  "name": "treasure-hunter",
-  "homepage": "https://nkossally.github.io/treasure-hunter/",
-  "version": "0.1.0",
-  "private": false,
-  "dependencies": {
-    "typescript": "^5.3.3"
-  }
-}
