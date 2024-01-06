@@ -1,0 +1,19 @@
+{
+  "name": "treasure-hunter-challenge",
+  "version": "1.0.0",
+  "description": "## Description - This is a solution to the Treasure Hunter Challenge. The solution was written in TypeScript in the file solution.ts and then compiled into the JavaScript file solution.js (by running tsc solution.ts) - Writing the solution took ~5hrs.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}
