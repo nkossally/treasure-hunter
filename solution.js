@@ -37,7 +37,7 @@ var Stacker = /** @class */ (function () {
                 this.goldCoordinates = [this.x, this.y + 1];
                 return this.drop;
             }
-            return this.goToRandomDirection(cell);
+            return this.goToRandomDirection(cell, /* canBeStair= */ true);
         };
         this.goToGold = function (cell) {
             _this.reset();
@@ -69,7 +69,8 @@ var Stacker = /** @class */ (function () {
             this.stairLevels.push(cell.level);
             if (this.stairLocations.length === this.goldLevel - 1)
                 return this.drop;
-            return this.goToRandomDirectionThatIsNotStair(cell);
+            return this.goToRandomDirection(cell, 
+            /* canBeStair= */ false);
         };
         this.constructStairs = function (cell) {
             var destinationStairIdx = this.getStairIdxThatNeedsBlock();
@@ -141,7 +142,7 @@ var Stacker = /** @class */ (function () {
                     dir = this.up;
                     break;
                 default:
-                    dir = this.goToRandomDirection(cell);
+                    dir = this.goToRandomDirection(cell, /* canBeStair= */ true);
                     break;
             }
             this.steps.push(dir);
@@ -172,77 +173,44 @@ var Stacker = /** @class */ (function () {
             }
             return reverseStep;
         };
-        this.goToRandomDirection = function (cell) {
+        this.goToRandomDirection = function (cell, canBeStair) {
             var n = (Math.random() * 4) >> 0;
             switch (n) {
                 case 0:
-                    if (this.getCanGoLeft(cell)) {
+                    if (this.getCanGoLeft(cell) &&
+                        (canBeStair || !this.isStair(this.x - 1, this.y))) {
                         this.x--;
                         return this.left;
                     }
                     else {
-                        return this.goToRandomDirection(cell);
+                        return this.goToRandomDirection(cell, canBeStair);
                     }
                 case 1:
-                    if (this.getCanGoRight(cell)) {
+                    if (this.getCanGoRight(cell) &&
+                        (canBeStair || !this.isStair(this.x + 1, this.y))) {
                         this.x++;
                         return this.right;
                     }
                     else {
-                        return this.goToRandomDirection(cell);
+                        return this.goToRandomDirection(cell, canBeStair);
                     }
                 case 2:
-                    if (this.getCanGoDown(cell)) {
+                    if (this.getCanGoDown(cell) &&
+                        (canBeStair || !this.isStair(this.x, this.y + 1))) {
                         this.y++;
                         return this.down;
                     }
                     else {
-                        return this.goToRandomDirection(cell);
+                        return this.goToRandomDirection(cell, canBeStair);
                     }
                 case 3:
-                    if (this.getCanGoUp(cell)) {
+                    if (this.getCanGoUp(cell) &&
+                        (canBeStair || !this.isStair(this.x, this.y - 1))) {
                         this.y--;
                         return this.up;
                     }
                     else {
-                        return this.goToRandomDirection(cell);
-                    }
-            }
-        };
-        this.goToRandomDirectionThatIsNotStair = function (cell) {
-            var n = (Math.random() * 4) >> 0;
-            switch (n) {
-                case 0:
-                    if (this.getCanGoLeft(cell) && !this.isStair(this.x - 1, this.y)) {
-                        this.x--;
-                        return this.left;
-                    }
-                    else {
-                        return this.goToRandomDirectionThatIsNotStair(cell);
-                    }
-                case 1:
-                    if (this.getCanGoRight(cell) && !this.isStair(this.x + 1, this.y)) {
-                        this.x++;
-                        return this.right;
-                    }
-                    else {
-                        return this.goToRandomDirectionThatIsNotStair(cell);
-                    }
-                case 2:
-                    if (this.getCanGoDown(cell) && !this.isStair(this.x, this.y + 1)) {
-                        this.y++;
-                        return this.down;
-                    }
-                    else {
-                        return this.goToRandomDirectionThatIsNotStair(cell);
-                    }
-                case 3:
-                    if (this.getCanGoUp(cell) && !this.isStair(this.x, this.y - 1)) {
-                        this.y--;
-                        return this.up;
-                    }
-                    else {
-                        return this.goToRandomDirectionThatIsNotStair(cell);
+                        return this.goToRandomDirection(cell, canBeStair);
                     }
             }
         };
