@@ -144,7 +144,8 @@ var Stacker = /** @class */ (function () {
                     dir = this.goToRandomDirection(cell, /* isConstructingStairCase= */ false);
                     break;
             }
-            this.steps.push(dir);
+            if (dir)
+                this.steps.push(this.dirToNum[dir]);
             return dir;
         };
         this.isStair = function (x, y) {
@@ -175,7 +176,6 @@ var Stacker = /** @class */ (function () {
         this.goToRandomDirection = function (cell, isConstructingStairCase) {
             var dirs = this.getValidDirections(cell, isConstructingStairCase);
             if (dirs.length === 0) {
-                console.log("no dir baby");
                 return this.pickup;
             }
             var idx = Math.floor(Math.random() * dirs.length);
@@ -301,15 +301,16 @@ var Stacker = /** @class */ (function () {
                     _this.y--;
                     dir = _this.up;
                     break;
-                case !_this.isStair(_this.x - 1, _this.y + 1):
+                case !_this.isStair(_this.x, _this.y + 1):
                     _this.y++;
                     dir = _this.down;
                     break;
                 default:
                     break;
             }
-            if (dir)
-                _this.steps.push(dir);
+            if (dir) {
+                _this.steps.push(_this.dirToNum[dir]);
+            }
             return dir;
         };
         this.areLevelsNeighbors = function (level1, level2) {
@@ -351,10 +352,16 @@ var Stacker = /** @class */ (function () {
         this.pickup = "pickup";
         this.drop = "drop";
         this.reverseDirection = {
-            left: "right",
-            right: "left",
-            up: "down",
-            down: "up",
+            1: "right",
+            2: "left",
+            3: "up",
+            4: "down",
+        };
+        this.dirToNum = {
+            "left": 1,
+            "right": 2,
+            "down": 3,
+            "up": 4,
         };
     }
     return Stacker;

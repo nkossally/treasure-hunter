@@ -20,7 +20,7 @@ class Stacker {
   stairLocations: string[];
   stairLevels: number[];
   hasBlock: boolean;
-  steps: string[];
+  steps: number[];
   shouldClimbDown: boolean;
   empty: number;
   wall: number;
@@ -33,6 +33,7 @@ class Stacker {
   pickup: string;
   drop: string;
   reverseDirection: any;
+  dirToNum: any;
 
   constructor() {
     this.x = 0;
@@ -55,10 +56,16 @@ class Stacker {
     this.pickup = "pickup";
     this.drop = "drop";
     this.reverseDirection = {
-      left: "right",
-      right: "left",
-      up: "down",
-      down: "up",
+      1: "right",
+      2: "left",
+      3: "up",
+      4: "down",
+    };
+    this.dirToNum = {
+      "left": 1,
+     "right": 2,
+     "down": 3,
+       "up": 4,
     };
   }
 
@@ -217,7 +224,7 @@ class Stacker {
         dir = this.goToRandomDirection(cell, /* isConstructingStairCase= */ false);
         break;
     }
-    this.steps.push(dir);
+    if(dir) this.steps.push(this.dirToNum[dir]);
     return dir;
   };
 
@@ -254,7 +261,6 @@ class Stacker {
   ): string | undefined {
     const dirs = this.getValidDirections(cell, isConstructingStairCase);
     if (dirs.length === 0){
-      console.log("no dir baby")
       return this.pickup;
     } 
     var idx = Math.floor(Math.random() * dirs.length);
@@ -396,14 +402,16 @@ class Stacker {
         this.y--;
         dir = this.up;
         break;
-      case !this.isStair(this.x - 1, this.y + 1):
+      case !this.isStair(this.x, this.y + 1):
         this.y++;
         dir = this.down;
         break;
       default:
         break;
     }
-    if (dir) this.steps.push(dir);
+    if (dir){
+      this.steps.push(this.dirToNum[dir]);
+    } 
     return dir;
   };
 
