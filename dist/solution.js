@@ -215,22 +215,22 @@ var Stacker = /** @class */ (function () {
             }
             return dirs;
         };
-        this.getEmptySurroundingSquaresCount = function (cell) {
-            var count = 0;
-            if (!_this.isStair(_this.x - 1, _this.y) && cell.left.type !== _this.wall) {
-                count++;
-            }
-            if (!_this.isStair(_this.x + 1, _this.y) && cell.right.type !== _this.wall) {
-                count++;
-            }
-            if (!_this.isStair(_this.x, _this.y + 1) && cell.down.type !== _this.wall) {
-                count++;
-            }
-            if (!_this.isStair(_this.x - 1, _this.y - 1) && cell.up.type !== _this.wall) {
-                count++;
-            }
-            return count;
-        };
+        //  getEmptySurroundingSquaresCount = (cell: Cell): number =>{
+        //   let count = 0;
+        //   if(!this.isStair(this.x - 1, this.y) && cell.left.type !== this.wall){
+        //     count++;
+        //   }
+        //   if(!this.isStair(this.x + 1, this.y) && cell.right.type !== this.wall){
+        //     count++;
+        //   }
+        //   if(!this.isStair(this.x, this.y + 1) && cell.down.type !== this.wall){
+        //     count++;
+        //   }
+        //   if(!this.isStair(this.x - 1, this.y - 1) && cell.up.type !== this.wall){
+        //     count++;
+        //   }
+        //   return count;
+        // }
         this.climbToStairThatNeedsBlock = function () {
             var destinationStairIdx = _this.getStairIdxThatNeedsBlock();
             var positionStr = JSON.stringify([_this.x, _this.y]);
