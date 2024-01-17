@@ -117,6 +117,7 @@
 <script src="Slider.js"></script>
 <script src="challenge.js"></script>
 <script src="solution.js"></script>
+<script src="jquery.debounce-1.0.5.js"></script>
 
 <script>
     $('#width').change(function() {
@@ -133,15 +134,25 @@
             $(document).off('keydown', game.test);
         }
     });
-
+    
     $('#run-1').click(function() {
         game.run(1);
+        document.getElementById('run-1').disabled = true;
+        let timeout = setTimeout(()=>{
+            document.getElementById('run-1').disabled = false;
+            timeout = null;
+        }, 800)
     });
 
     $('#pause').click(game.pause);
 
     $('#run').click(function() {
         game.run($('#numRuns').val());
+        document.getElementById('run').disabled = true;
+        let timeout = setTimeout(()=>{
+            document.getElementById('run').disabled = false;
+            timeout = null;
+        }, 800)
     });
 
 	$('#reveal-map').change(game.draw);
