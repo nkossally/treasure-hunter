@@ -99,7 +99,7 @@ class Stacker {
       this.goldCoordinates = [this.x, this.y + 1];
       return this.down;
     }
-    return this.goToRandomDirection(cell, /* canBeStair= */ true);
+    return this.goToRandomDirection(cell, /* isConstructingStairCase= */ false);
   };
 
   goToGold = (cell: Cell): string | undefined => {
@@ -135,7 +135,7 @@ class Stacker {
     this.stairLevels.push(cell.level);
     if (this.stairLocations.length === this.goldLevel - 1) return this.drop;
 
-    return this.goToRandomDirection(cell, /* canBeStair= */ false);
+    return this.goToRandomDirection(cell, /* isConstructingStairCase= */ true);
   };
 
   constructStairs = function (cell: Cell): string | undefined {
@@ -214,7 +214,7 @@ class Stacker {
         dir = this.up;
         break;
       default:
-        dir = this.goToRandomDirection(cell, /* canBeStair= */ true);
+        dir = this.goToRandomDirection(cell, /* isConstructingStairCase= */ false);
         break;
     }
     this.steps.push(dir);
@@ -250,9 +250,13 @@ class Stacker {
 
   goToRandomDirection = function (
     cell: Cell,
-    canBeStair: boolean
+    isConstructingStairCase: boolean
   ): string | undefined {
-    const dirs = this.getValidDirections(cell, canBeStair);
+    const dirs = this.getValidDirections(cell, isConstructingStairCase);
+    if (dirs.length === 0){
+      console.log("no dir baby")
+      return this.pickup;
+    } 
     var idx = Math.floor(Math.random() * dirs.length);
     const dir = dirs[idx];
     switch (dir) {
@@ -271,34 +275,51 @@ class Stacker {
     }
   };
 
-  getValidDirections = function (cell: Cell, canBeStair: boolean): string[] {
+  getValidDirections = function (cell: Cell, isConstructingStairCase: boolean): string[] {
     const dirs: string[] = [];
     if (
       this.getCanGoLeft(cell) &&
-      (canBeStair || !this.isStair(this.x - 1, this.y))
+      (!isConstructingStairCase || !this.isStair(this.x - 1, this.y))
     ) {
       dirs.push(this.left);
     }
     if (
       this.getCanGoRight(cell) &&
-      (canBeStair || !this.isStair(this.x + 1, this.y))
+      (!isConstructingStairCase || !this.isStair(this.x + 1, this.y))
     ) {
       dirs.push(this.right);
     }
     if (
       this.getCanGoDown(cell) &&
-      (canBeStair || !this.isStair(this.x, this.y + 1))
+      (!isConstructingStairCase || !this.isStair(this.x, this.y + 1))
     ) {
       dirs.push(this.down);
     }
     if (
       this.getCanGoUp(cell) &&
-      (canBeStair || !this.isStair(this.x, this.y - 1))
+      (!isConstructingStairCase || !this.isStair(this.x, this.y - 1))
     ) {
       dirs.push(this.up);
     }
     return dirs;
   };
+
+   getEmptySurroundingSquaresCount = (cell: Cell): number =>{
+    let count = 0;
+    if(!this.isStair(this.x - 1, this.y) && cell.left.type !== this.wall){
+      count++;
+    }
+    if(!this.isStair(this.x + 1, this.y) && cell.right.type !== this.wall){
+      count++;
+    }
+    if(!this.isStair(this.x, this.y + 1) && cell.down.type !== this.wall){
+      count++;
+    }
+    if(!this.isStair(this.x - 1, this.y - 1) && cell.up.type !== this.wall){
+      count++;
+    }
+    return count;
+  }
 
   climbToStairThatNeedsBlock = (): string | undefined => {
     const destinationStairIdx = this.getStairIdxThatNeedsBlock();

@@ -37,7 +37,7 @@ var Stacker = /** @class */ (function () {
                 this.goldCoordinates = [this.x, this.y + 1];
                 return this.down;
             }
-            return this.goToRandomDirection(cell, /* canBeStair= */ true);
+            return this.goToRandomDirection(cell, /* isConstructingStairCase= */ false);
         };
         this.goToGold = function (cell) {
             _this.reset();
@@ -69,7 +69,7 @@ var Stacker = /** @class */ (function () {
             this.stairLevels.push(cell.level);
             if (this.stairLocations.length === this.goldLevel - 1)
                 return this.drop;
-            return this.goToRandomDirection(cell, /* canBeStair= */ false);
+            return this.goToRandomDirection(cell, /* isConstructingStairCase= */ true);
         };
         this.constructStairs = function (cell) {
             var destinationStairIdx = this.getStairIdxThatNeedsBlock();
@@ -141,7 +141,7 @@ var Stacker = /** @class */ (function () {
                     dir = this.up;
                     break;
                 default:
-                    dir = this.goToRandomDirection(cell, /* canBeStair= */ true);
+                    dir = this.goToRandomDirection(cell, /* isConstructingStairCase= */ false);
                     break;
             }
             this.steps.push(dir);
@@ -172,8 +172,12 @@ var Stacker = /** @class */ (function () {
             }
             return reverseStep;
         };
-        this.goToRandomDirection = function (cell, canBeStair) {
-            var dirs = this.getValidDirections(cell, canBeStair);
+        this.goToRandomDirection = function (cell, isConstructingStairCase) {
+            var dirs = this.getValidDirections(cell, isConstructingStairCase);
+            if (dirs.length === 0) {
+                console.log("no dir baby");
+                return this.pickup;
+            }
             var idx = Math.floor(Math.random() * dirs.length);
             var dir = dirs[idx];
             switch (dir) {
@@ -191,25 +195,41 @@ var Stacker = /** @class */ (function () {
                     return this.up;
             }
         };
-        this.getValidDirections = function (cell, canBeStair) {
+        this.getValidDirections = function (cell, isConstructingStairCase) {
             var dirs = [];
             if (this.getCanGoLeft(cell) &&
-                (canBeStair || !this.isStair(this.x - 1, this.y))) {
+                (!isConstructingStairCase || !this.isStair(this.x - 1, this.y))) {
                 dirs.push(this.left);
             }
             if (this.getCanGoRight(cell) &&
-                (canBeStair || !this.isStair(this.x + 1, this.y))) {
+                (!isConstructingStairCase || !this.isStair(this.x + 1, this.y))) {
                 dirs.push(this.right);
             }
             if (this.getCanGoDown(cell) &&
-                (canBeStair || !this.isStair(this.x, this.y + 1))) {
+                (!isConstructingStairCase || !this.isStair(this.x, this.y + 1))) {
                 dirs.push(this.down);
             }
             if (this.getCanGoUp(cell) &&
-                (canBeStair || !this.isStair(this.x, this.y - 1))) {
+                (!isConstructingStairCase || !this.isStair(this.x, this.y - 1))) {
                 dirs.push(this.up);
             }
             return dirs;
+        };
+        this.getEmptySurroundingSquaresCount = function (cell) {
+            var count = 0;
+            if (!_this.isStair(_this.x - 1, _this.y) && cell.left.type !== _this.wall) {
+                count++;
+            }
+            if (!_this.isStair(_this.x + 1, _this.y) && cell.right.type !== _this.wall) {
+                count++;
+            }
+            if (!_this.isStair(_this.x, _this.y + 1) && cell.down.type !== _this.wall) {
+                count++;
+            }
+            if (!_this.isStair(_this.x - 1, _this.y - 1) && cell.up.type !== _this.wall) {
+                count++;
+            }
+            return count;
         };
         this.climbToStairThatNeedsBlock = function () {
             var destinationStairIdx = _this.getStairIdxThatNeedsBlock();
